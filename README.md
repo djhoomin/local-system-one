@@ -254,6 +254,14 @@ The student's limits are not one thing:
 Data buys a wider box; a general box is a different model. The student can grow sideways almost
 for free, but it can't grow up without becoming the thing it was imitating.
 
+Which is the odd shape of the whole exercise: architecturally this is going *backwards* — BERT
+with a classification head, four logits, no generation, the thing everyone abandoned once decoders
+could answer anything. What changed isn't the architecture but what feeds it: a decoder big enough
+to label any schema, and a training signal that makes a small model's probabilities mean
+something. The encoder was never the limitation; the cost of teaching it a new task was. Going
+backwards is a step forward once that cost drops to nothing — and a general System One model is
+what the old shape looks like when it drops to zero.
+
 Next steps if pushing further: label the remaining 285 balanced states, and an lr/epoch sweep —
 the dev loss was still falling at the last checkpoint of every run.
 
