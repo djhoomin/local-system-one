@@ -157,6 +157,12 @@ Design choices:
   epoch for information but never trained or selected on; they remain the test set.
 - The student is **task-specific**: it answers the four questions it was trained on by name and
   ignores instructions/criteria. That is the trade for encoder latency; Jev is general.
+- **Fixed schema, one domain.** Inputs must be the JSON shape it was trained on (`user_message`,
+  `cwd`, `recent_tool_calls`); rename or add a key and it is out of distribution without any
+  error. All training states were a coding agent's — a support or ops message in the same shape
+  still gets an answer with plausible-looking probabilities, but nothing here says those are
+  calibrated. Encoders degrade quietly, not loudly: inside the box it is a 19 ms calibrated
+  function; outside it, a guess with a confident face.
 
 ### Student results (ModernBERT-base, 149M, 1,900 synthetic states, 4 epochs, 6 min on MPS)
 
