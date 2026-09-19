@@ -186,7 +186,7 @@ def print_table(reports: list[dict]) -> None:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--backend", choices=["nli", "ollama", "student", "typesafe"])
+    ap.add_argument("--backend", choices=["nli", "ollama", "student", "laya", "von", "typesafe"])
     ap.add_argument("--model")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--report", action="store_true", help="only print tables from cached results")

@@ -29,6 +29,8 @@ TYPESAFE_API_KEY=... uv run demo.py                       # hosted Jev, once you
 |-----------|--------------------------------------------|------------------------------------------------------------------------|------------------|-----------------|
 | `nli`     | `MoritzLaurer/deberta-v3-base-zeroshot-v2.0` | one batched entailment pass over every option of every question, no decoding | ~130–300 ms / state | guardrails OK, routing weak on structured state |
 | `ollama`  | any Ollama chat model (`phi3` default)     | lettered multiple-choice prompt, distribution read from first-token logprobs | ~1 s / state (4 q's) | all 12 demo decisions correct; probabilities overconfident |
+| `laya`    | `convaiinnovations/laya`                   | open general cross-encoder, question schema at inference (421M)        | ~140 ms / state  | routing 0.33, systematic `none` bias |
+| `von`     | `wfzyx/von-1.0`                            | open general cross-encoder trained on NLI corpora (395M)               | ~280 ms / state  | routing 0.45, same bias as `nli` |
 | `typesafe`| `jev-latest`                               | the real thing                                                         | 70–500 ms claimed | withheld, see below |
 
 The `nli` backend is the closest match to how Jev *behaves* (every answer scored in one pass,
@@ -144,6 +146,8 @@ uv run distill/label_states.py --phase tool        # gemma3 12b: tool, calibrate
 uv run distill/label_states.py --phase confirm     # gemma3 12b: needs_confirmation (overrides gemma3n's)
 uv run distill/train_student.py --max-len 128      # ModernBERT-base + 4 heads on the soft labels
 uv run eval.py --backend student                   # scored on the 123 human rows like any other backend
+uv run eval.py --backend laya                      # open general encoders, same harness
+uv run eval.py --backend von
 ./distill/run_pipeline.sh                          # all of the above, chained
 ```
 
@@ -175,6 +179,8 @@ Design choices:
 | student v2 (needs_confirm from 12B) | 19 | 0.72 | 0.12 | 0.79 | 0.99 | 0.97 | 0.62 |
 | student v3 (+ destructive from 12B) | 19 | 0.67 | 0.08 | 0.79 | 0.99 | 0.97 | 0.64 |
 | **student v4 (+ 317 destructive-seeded states)** | **19** | **0.76** | 0.08 | **0.76** | 0.98 | **0.99** | **0.67** |
+| Laya `laya` (open general encoder, 421M) | 142 | 0.33 | 0.41 | 2.09 | 0.89 | 0.70 | 0.54 |
+| Von `von-1.0` (open general encoder, 395M) | 277 | 0.45 | 0.09 | 1.31 | 0.93 | 0.92 | 0.52 |
 | DeBERTa-v3-base student, 2 of 4 epochs (see below) | 27 | 0.46 | 0.23 | 1.24 | 1.00 | 0.90 | 0.74 |
 
 - **Calibration transferred.** The student's raw softmax is the best-calibrated routing output of
@@ -218,6 +224,28 @@ Three separate problems on an M1 Pro. transformers 5 loads it in fp16 (fixed wit
 with Ollama; and even alone it grew to ~10 GB of Metal allocations and swapped the trainer out
 mid-epoch 3, at ~12× ModernBERT's step time. It trailed ModernBERT at every epoch it completed
 (0.46 vs 0.69 routing at epoch 2). Its half-trained checkpoint is in the table for the record.
+
+### The clones
+
+Within 72 hours of Jev's announcement at least two open-weights "System One" models appeared with
+the same three primitives and the same acronym: [Laya](https://github.com/NandhaKishorM/laya)
+(ModernBERT-large, 421M, Apache-2.0) and [Von](https://github.com/wfzyx/von) (ModernBERT, 395M,
+Apache-2.0, trained on NLI corpora). Both are *general* — the question schema is an inference-time
+input, a cross-encoder — which is exactly the thing the fixed-head student is not. Both run through
+the identical harness (`--backend laya`, `--backend von`); their own shipped temperature tables
+are applied.
+
+On an unseen schema they land at **0.33** and **0.45** routing, each with a systematic bias
+(Laya: `none` on 73/123; Von: `run_shell` on most things, the same cwd/recent-calls pull as the
+zero-shot NLI backend — which is what an NLI-trained encoder is). Laya's raw ECE is 0.41; its
+temperature table doesn't transfer. Von is well calibrated (ECE 0.09, fitted T≈1.1) and good at
+`destructive` (AUROC 0.92, an entailment-shaped question), and both are decent on urgency, an
+ordinal rubric with described levels. Neither has signal on `needs_confirmation`. Laya's own
+README says the same thing from the other side: its general checkpoint scores 0.36 on its own
+benchmark and only the task-fine-tuned one reaches 0.77.
+
+So: the interface is free — three clones in three days, four counting this repo. The general
+behaviour is the product, and nobody has it open yet. Specificity is where the accuracy lives.
 
 ### Jev itself
 

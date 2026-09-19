@@ -1,4 +1,16 @@
 {
+ "laya": {
+  "tool_T": 3.9810717055349722,
+  "urgency_T": 1.1220184543019633,
+  "destructive_platt": [
+   0.79,
+   -2.425
+  ],
+  "needs_confirmation_platt": [
+   0.15000000000000002,
+   -0.9
+  ]
+ },
  "nli": {
   "tool_T": 1.5848931924611136,
   "urgency_T": 100.0,
@@ -143,6 +155,18 @@
    -1.025
   ]
  },
+ "student-deberta-v3": {
+  "tool_T": 1.5848931924611136,
+  "urgency_T": 1.9952623149688795,
+  "destructive_platt": [
+   2.05,
+   4.9
+  ],
+  "needs_confirmation_platt": [
+   2.0,
+   1.5
+  ]
+ },
  "student-v2": {
   "tool_T": 0.8912509381337456,
   "urgency_T": 1.5848931924611136,
@@ -177,6 +201,30 @@
   "needs_confirmation_platt": [
    0.9400000000000001,
    -0.225
+  ]
+ },
+ "typesafe": {
+  "tool_T": 0.8912509381337456,
+  "urgency_T": 1.4125375446227544,
+  "destructive_platt": [
+   2.05,
+   -1.175
+  ],
+  "needs_confirmation_platt": [
+   2.05,
+   -1.125
+  ]
+ },
+ "von": {
+  "tool_T": 1.1220184543019633,
+  "urgency_T": 0.7943282347242815,
+  "destructive_platt": [
+   1.63,
+   -1.9
+  ],
+  "needs_confirmation_platt": [
+   -0.05,
+   -1.225
   ]
  }
 }

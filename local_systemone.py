@@ -320,6 +320,105 @@ class StudentBackend:
         return answers, Usage(input_tokens=int(enc["attention_mask"].sum()), output_tokens=0)
 
 
+class LayaBackend:
+    """Laya (convaiinnovations/laya): an open-weights cross-encoder that takes the question schema
+    at inference, i.e. the *general* encoder our fixed-head student is not. Questions are passed
+    through with their instructions and criteria. Only the requested checkpoint is downloaded.
+    """
+
+    CHECKPOINTS = {"english": "", "multilingual": "multilingual", "typed-decisions": "typed-decisions"}
+
+    def __init__(self, model_name: str | None = None):
+        import torch
+        from huggingface_hub import snapshot_download
+        from laya import Agent
+
+        self.checkpoint = model_name or "english"
+        sub = self.CHECKPOINTS[self.checkpoint]
+        prefix = f"{sub}/" if sub else ""
+        patterns = [f"{prefix}model.safetensors", f"{prefix}encoder/*", f"{prefix}rl_agent_config.json",
+                    f"{prefix}tokenizer/*"]
+        if not sub:  # the root checkpoint keeps its helper modules at the repo root
+            patterns += ["rl_common.py", "rl_agent_api.py", "email_utils.py"]
+        root = snapshot_download("convaiinnovations/laya", allow_patterns=patterns)
+        self.name = f"laya:{self.checkpoint}"
+        device = "mps" if torch.backends.mps.is_available() else "cpu"
+        self.agent = Agent(str(Path(root) / sub) if sub else root, device=device)
+
+    @staticmethod
+    def _question(q: Choice | Score | Noul) -> dict:
+        instr = _text(q.instructions) if q.instructions else ""
+        if isinstance(q, Choice):
+            return {"type": "choice", "instructions": instr,
+                    "criteria": {k: (_text(v) if v is not None else k) for k, v in q.criteria.items()}}
+        if isinstance(q, Score):
+            return {"type": "score", "instructions": instr, "criteria": [_text(c) for c in q.criteria]}
+        return {"type": "noul", "instructions": instr}
+
+    def run(self, state: str, questions: dict[str, Choice | Score | Noul]):
+        out = self.agent.system_one(state, {k: self._question(q) for k, q in questions.items()})
+        answers = {}
+        for name, q in questions.items():
+            a = out["answers"][name]
+            if isinstance(q, Choice):
+                answers[name] = ChoiceAnswer(choice=a["choice"], confidence=float(a["confidence"]),
+                                             probabilities={k: float(v) for k, v in a["probabilities"].items()})
+            elif isinstance(q, Score):
+                answers[name] = ScoreAnswer(score=float(a["score"]), confidence=float(a["confidence"]),
+                                            legend={int(k): v for k, v in a["legend"].items()},
+                                            probabilities={int(k): float(v) for k, v in a["probabilities"].items()})
+            else:
+                answers[name] = NoulAnswer(noul=float(a["noul"]))
+        u = out.get("usage", {})
+        return answers, Usage(input_tokens=u.get("input_tokens"), output_tokens=u.get("output_tokens", 0))
+
+
+class VonBackend:
+    """Von (wfzyx/von-1.0): another open-weights ModernBERT cross-encoder with the Jev interface,
+    trained on NLI corpora. Its API mirrors the SDK, so questions pass through as plain dicts.
+    """
+
+    def __init__(self, model_name: str | None = None):
+        import torch
+        from von.engine import VonEngine
+
+        self.checkpoint = model_name or "von-1.0"
+        self.name = f"von:{self.checkpoint}"
+        device = "mps" if torch.backends.mps.is_available() else "cpu"
+        self.engine = VonEngine.get_instance(self.checkpoint, device=device)
+        from von.client import VonClient
+
+        self.client = VonClient()
+
+    @staticmethod
+    def _question(q: Choice | Score | Noul) -> dict:
+        instr = _text(q.instructions) if q.instructions else ""
+        if isinstance(q, Choice):
+            return {"type": "choice", "instructions": instr,
+                    "criteria": {k: (_text(v) if v is not None else None) for k, v in q.criteria.items()}}
+        if isinstance(q, Score):
+            return {"type": "score", "instructions": instr, "criteria": [_text(c) for c in q.criteria]}
+        return {"type": "noul", "instructions": instr}
+
+    def run(self, state: str, questions: dict[str, Choice | Score | Noul]):
+        out = self.client.system_one(state=state, questions={k: self._question(q) for k, q in questions.items()},
+                                     model=self.checkpoint)
+        answers = {}
+        for name, q in questions.items():
+            a = out.answers[name]
+            if isinstance(q, Choice):
+                answers[name] = ChoiceAnswer(choice=a.choice, confidence=float(a.confidence),
+                                             probabilities={k: float(v) for k, v in a.probabilities.items()})
+            elif isinstance(q, Score):
+                answers[name] = ScoreAnswer(score=float(a.score), confidence=float(a.confidence),
+                                            legend={int(k): v for k, v in a.legend.items()},
+                                            probabilities={int(k): float(v) for k, v in a.probabilities.items()})
+            else:
+                answers[name] = NoulAnswer(noul=float(a.noul))
+        u = getattr(out, "usage", None)
+        return answers, Usage(input_tokens=getattr(u, "input_tokens", None), output_tokens=0)
+
+
 # --------------------------------------------------------------------------------------------
 # Client
 # --------------------------------------------------------------------------------------------
@@ -333,11 +432,15 @@ class LocalClient:
             self.backend = NLIBackend(model or DEFAULT_NLI_MODEL)
         elif backend == "student":
             self.backend = StudentBackend(model)
+        elif backend == "laya":
+            self.backend = LayaBackend(model)
+        elif backend == "von":
+            self.backend = VonBackend(model)
         elif backend == "ollama":
             self.backend = OllamaBackend(model or DEFAULT_OLLAMA_MODEL)
             backend = f"ollama-{self.backend.style}" if self.backend.style != "letters" else backend
         else:
-            raise ValueError(f"unknown backend {backend!r}; expected 'nli', 'ollama' or 'student'")
+            raise ValueError(f"unknown backend {backend!r}; expected 'nli', 'ollama', 'student', 'laya' or 'von'")
         self.model = f"local/{backend}:{self.backend.name}"
 
     def system_one(self, state, questions, *, model: str | None = None, **_ignored) -> SystemOneResponse:
