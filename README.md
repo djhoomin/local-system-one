@@ -236,6 +236,24 @@ student is what you build when you're latency-bound or air-gapped. (Hyperparamet
 explored — one config, dev loss still falling at every checkpoint — so the student's remaining gap
 to its teachers is partly headroom, not ceiling.)
 
+### Two limits, two different levers
+
+The student's limits are not one thing:
+
+- **Domain is a data problem.** More varied states — support tickets, ops runbooks, other key sets —
+  under the same four heads is just labeling budget; a few thousand more teacher-labeled states is
+  an afternoon. Nothing structural stops the box from getting wider.
+- **Schema is an architecture problem.** No amount of data lets four fixed heads answer a fifth
+  question, because question text never enters the model. Making it general means making the
+  question an *input*: encode state and question together (a cross-encoder), or encode them
+  separately and score each option against the state (a bi-encoder — roughly what the zero-shot
+  NLI backend was doing, badly). That is a model that reads arbitrary criteria and returns
+  calibrated distributions over arbitrary option lists — and *that* is the thing that plausibly
+  needs Jev-scale data and whatever RLCD actually is.
+
+Data buys a wider box; a general box is a different model. The student can grow sideways almost
+for free, but it can't grow up without becoming the thing it was imitating.
+
 Next steps if pushing further: label the remaining 285 balanced states, and an lr/epoch sweep —
 the dev loss was still falling at the last checkpoint of every run.
 
