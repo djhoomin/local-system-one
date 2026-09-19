@@ -244,7 +244,28 @@ ordinal rubric with described levels. Neither has signal on `needs_confirmation`
 README says the same thing from the other side: its general checkpoint scores 0.36 on its own
 benchmark and only the task-fine-tuned one reaches 0.77.
 
-So: the interface is free — three clones in three days, four counting this repo. The general
+Those two are not alone. Everything below was created between Sep 16 and Sep 19, 2026 — Jev was
+announced Sep 15 — and every one made the same fork this repo did: an encoder with the schema as
+input, or a decoder read through first-token logprobs.
+
+| project | family | base | created |
+|---|---|---|---|
+| [Laya](https://github.com/NandhaKishorM/laya) | encoder | ModernBERT-large, 421M | 09-18 |
+| [Von](https://github.com/wfzyx/von) | encoder | ModernBERT, 395M, NLI corpora | 09-18 |
+| [Verdict / rlcd-modernbert-151m](https://github.com/Heman10x-NGU/Verdict-open-jev) | encoder | ModernBERT, 151M | 09-17 |
+| [open-jev-typed-decision-engine](https://github.com/intikhab49/open-jev-typed-decision-engine) | encoder | 150M | 09-19 |
+| [open-jev-deberta-v3-large](https://huggingface.co/com-kotobalabs/open-jev-deberta-v3-large) | encoder | DeBERTa-v3-large | 09-18 |
+| [system-one-model](https://huggingface.co/lafalce/system-one-model), [Jeff-1](https://huggingface.co/GestaltLabs/Jeff-1) | encoder | ModernBERT-base | 09-19 |
+| [open-alternative-jev](https://github.com/ikermoel/open-alternative-jev) | LLM logprobs | any HF / vLLM model | 09-18 |
+| [OpenJev](https://github.com/razorback16/openjev) | LLM logprobs | DiffusionGemma 26B | 09-18 |
+| [system-one-qwen3.5-4b-scorer](https://huggingface.co/pngwn/system-one-qwen3.5-4b-scorer), LitJev, NanoJev | LLM logprobs | Qwen 0.6–4B | 09-16 – 09-18 |
+| [snellingio/system-one](https://github.com/snellingio/system-one) | — | earliest, one day after the announcement | 09-16 |
+
+The ones claiming Jev parity claim it on their own benchmarks; none report a general encoder
+scored on a schema it didn't train on, which is what the two rows above are. The acronym "RLCD"
+has been re-expanded at least three different ways across them.
+
+So: the interface is free — a dozen clones in four days, one more counting this repo. The general
 behaviour is the product, and nobody has it open yet. Specificity is where the accuracy lives.
 
 ### Jev itself
