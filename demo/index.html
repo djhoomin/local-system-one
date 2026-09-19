@@ -1,0 +1,275 @@
+<meta charset="utf-8">
+<title>We Have Jev at Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F2F4F8; --surface:#FFFFFF; --surface-2:#E9EDF4; --ink:#131827; --ink-2:#414A5E; --muted:#6A7288;
+  --rule:#D6DBE6; --accent:#2247D9; --accent-soft:#DCE3FB; --on-accent:#fff;
+  --s1:#2247D9; --s2:#D9711E; --s3:#1F9E89; --s4:#A23BB5;
+  --danger:#C6412C; --warn:#B7801A;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif; --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#0E1320; --surface:#171D2C; --surface-2:#202839; --ink:#E9EDF5; --ink-2:#C2C9D8; --muted:#98A2B8;
+  --rule:#2B3346; --accent:#6C8BFF; --accent-soft:#233058; --on-accent:#0E1320;
+  --s1:#6C8BFF; --s2:#CF7A2E; --s3:#22997F; --s4:#B76BD0; --danger:#E0684F; --warn:#E0A63C;
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1320; --surface:#171D2C; --surface-2:#202839; --ink:#E9EDF5; --ink-2:#C2C9D8; --muted:#98A2B8;
+  --rule:#2B3346; --accent:#6C8BFF; --accent-soft:#233058; --on-accent:#0E1320;
+  --s1:#6C8BFF; --s2:#CF7A2E; --s3:#22997F; --s4:#B76BD0; --danger:#E0684F; --warn:#E0A63C;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:clamp(16px,4vw,40px);padding-block:32px 64px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:40px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:grid;gap:12px;max-width:760px}
+header h1{font-size:clamp(34px,6vw,58px);font-weight:800;letter-spacing:-.02em;line-height:1.02}
+header p{font-size:17px;color:var(--ink-2);max-width:62ch;margin:0}
+header .tag{display:inline-flex;gap:8px;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--rule);border-radius:999px;padding:4px 10px;width:max-content}
+
+/* the call */
+.call{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:0;border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--surface)}
+.pane{padding:22px;min-width:0}
+.pane+.pane{border-left:1px solid var(--rule)}
+.pane-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px}
+.pane-h h2{font-size:15px;font-weight:800;letter-spacing:.01em}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{font:500 12.5px/1.2 var(--body);border:1px solid var(--rule);background:var(--surface);color:var(--ink-2);padding:6px 10px;border-radius:999px;cursor:pointer;text-align:left;max-width:100%}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.chip:focus-visible,.tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+pre.state{margin:0;font:13px/1.55 var(--mono);background:var(--surface-2);border-radius:10px;padding:14px 16px;overflow-x:auto;color:var(--ink-2)}
+pre.state .k{color:var(--muted)} pre.state .v{color:var(--ink)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{font:500 12.5px/1.2 var(--body);border:1px solid var(--rule);background:var(--surface);color:var(--ink-2);padding:6px 10px;border-radius:8px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.tab .ms{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.tab[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);background:var(--surface-2)}
+.tab[aria-pressed="true"] .ms{color:var(--ink-2)}
+.clock{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;margin:16px 0 18px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.clock .bar{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.clock .fill{height:100%;width:0;background:var(--accent);border-radius:999px}
+.clock .fill.run{transition:width var(--dur) linear}
+.clock b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;min-width:8ch;text-align:right}
+.answers{display:grid;gap:14px}
+.answers.pending{opacity:.35}
+.ans{display:grid;gap:6px}
+.ans-h{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ans-h .name{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.ans-h .type{font-family:var(--mono);font-size:11px;color:var(--muted);border:1px solid var(--rule);border-radius:4px;padding:1px 6px}
+.ans-h .val{font-family:var(--mono);font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}
+.ans-h .val .chk{color:var(--muted);font-weight:400;margin-left:6px}
+.dist{display:grid;gap:3px}
+.row{display:grid;grid-template-columns:9.5em 1fr 3.4em;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.row .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .trk{height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.row .bar{display:block;height:100%;background:var(--accent);opacity:.45;border-radius:4px;transition:width .35s ease}
+.row.top .bar{opacity:1}
+.row.top .lbl{color:var(--ink);font-weight:500}
+.row .p{text-align:right;font-variant-numeric:tabular-nums}
+.noul{display:grid;grid-template-columns:1fr 3.4em;align-items:center;gap:8px}
+.noul .trk{height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.noul .bar{display:block;height:100%;border-radius:4px;transition:width .35s ease}
+.noul .p{font-family:var(--mono);font-size:12px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.d .bar{background:var(--danger)} .c .bar{background:var(--warn)}
+.gold{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.gold b{color:var(--ink-2);font-weight:500}
+
+/* sections */
+section{display:grid;gap:16px}
+section>h2{font-size:24px;font-weight:800;letter-spacing:-.01em}
+section>p{margin:0;max-width:66ch;color:var(--ink-2)}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.step{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px 18px;display:grid;gap:6px;align-content:start}
+.step h3{font-size:15px;font-weight:800}
+.step p{margin:0;font-size:14px;color:var(--ink-2)}
+.step .n{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start}
+table{border-collapse:collapse;width:100%;font-size:13px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+.tblwrap{overflow-x:auto}
+th,td{text-align:left;padding:9px 9px;border-bottom:1px solid var(--rule);white-space:nowrap}
+th:first-child,td:first-child{padding-left:12px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--surface-2)}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right} th.num{text-align:right}
+tr:last-child td{border-bottom:0}
+tr.hl td{background:var(--accent-soft)}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:-1px}
+figure{margin:0;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:grid;gap:8px}
+figure figcaption{font-size:13px;color:var(--muted)}
+figure svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--ink-2)}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--ground);font:12px/1.4 var(--mono);padding:6px 8px;border-radius:6px;transform:translate(-50%,calc(-100% - 10px));white-space:nowrap;opacity:0;transition:opacity .12s}
+footer{font-size:13px;color:var(--muted);max-width:70ch;display:grid;gap:6px}
+@media (max-width:760px){
+  .call,.grid2{grid-template-columns:1fr}
+  .pane+.pane{border-left:0;border-top:1px solid var(--rule)}
+  .steps{grid-template-columns:1fr}
+  .row{grid-template-columns:7em 1fr 3.2em}
+}
+@media (prefers-reduced-motion: reduce){.clock .fill.run{transition:none}.row .bar,.noul .bar{transition:none}}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="tag">thought experiment · not affiliated with TypeSafe</span>
+  <h1>We have Jev at home.</h1>
+  <p>A <em>System One</em> model takes a state and returns typed decisions with calibrated probabilities — no text, no tokens. Jev is invite-only, so here's the same function call served by a 149M-parameter encoder distilled on a laptop. Pick a state, switch models, and watch the clock.</p>
+</header>
+
+<div class="call">
+  <div class="pane">
+    <div class="pane-h"><h2>system_one(state, questions)</h2><span class="eyebrow">request</span></div>
+    <div class="chips" id="chips" role="group" aria-label="Example agent states"></div>
+    <pre class="state" id="state"></pre>
+  </div>
+  <div class="pane">
+    <div class="pane-h"><h2>SystemOneResponse</h2><span class="eyebrow">response</span></div>
+    <div class="tabs" id="tabs" role="group" aria-label="Model"></div>
+    <div class="clock"><div class="bar"><div class="fill" id="fill"></div></div><b id="ms">0 ms</b></div>
+    <div class="answers" id="answers"></div>
+  </div>
+</div>
+
+<section>
+  <h2>How the 19 ms model was made</h2>
+  <p>Nothing under 3B parameters could do this zero-shot — the small models all failed through some systematic bias, never noise. So the fast model had to be trained, and the recipe is just distillation from calibrated targets.</p>
+  <div class="steps">
+    <div class="step"><span class="n">teachers</span><h3>Two local LLMs label 2,300 synthetic states</h3><p>Gemma 3 12B routes the tool; Gemma 3n E4B scores urgency and the yes/no checks. Answers are read off first-token logprobs, one prefill per question, never a generation.</p></div>
+    <div class="step"><span class="n">calibration</span><h3>Their probabilities get fixed first</h3><p>Raw LLM logprobs are absurdly overconfident (0.99 on everything). One fitted temperature per head, from 123 hand-labeled states, turns them into targets worth copying.</p></div>
+    <div class="step"><span class="n">student</span><h3>ModernBERT-base learns the distribution</h3><p>Four linear heads on a 149M encoder, trained on the soft targets for 8 minutes. It comes out calibrated by construction: fitting a temperature to its output afterwards gives T ≈ 0.9 — nothing to fix.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>What it costs and what you get</h2>
+  <p>Measured on 123 human-labeled states the student never saw, on an M1 Pro. The 12B is the local accuracy ceiling; the student gets 92% of it at 1/290th the latency, with the best-calibrated raw probabilities in the set.</p>
+  <div class="grid2">
+    <div class="tblwrap"><table>
+      <thead><tr><th>model</th><th class="num">ms</th><th class="num">tool acc</th><th class="num">ECE</th><th class="num">destr. AUROC</th><th class="num">confirm AUROC</th></tr></thead>
+      <tbody>
+        <tr><td>zero-shot DeBERTa-v3 NLI</td><td class="num">123</td><td class="num">0.50</td><td class="num">0.08</td><td class="num">0.72</td><td class="num">0.47</td></tr>
+        <tr><td><span class="sw" style="background:var(--s3)"></span>Gemma 3n E4B</td><td class="num">2,062</td><td class="num">0.72</td><td class="num">0.28</td><td class="num">0.95</td><td class="num">0.71</td></tr>
+        <tr><td><span class="sw" style="background:var(--s2)"></span>Gemma 3 12B</td><td class="num">5,508</td><td class="num">0.83</td><td class="num">0.15</td><td class="num">0.94</td><td class="num">0.78</td></tr>
+        <tr class="hl"><td><span class="sw" style="background:var(--s1)"></span>student (149M)</td><td class="num">19</td><td class="num">0.76</td><td class="num">0.08</td><td class="num">0.99</td><td class="num">0.67</td></tr>
+      </tbody>
+    </table></div>
+    <figure id="fig">
+      <div class="legend"><span><span class="sw" style="background:var(--s1)"></span>student</span><span><span class="sw" style="background:var(--s2)"></span>Gemma 3 12B, raw logprobs</span><span><span class="sw" style="background:var(--s3)"></span>Gemma 3n, raw logprobs</span></div>
+      <svg viewBox="0 0 360 250" role="img" aria-label="Reliability diagram: confidence versus accuracy for tool routing"></svg>
+      <figcaption>Reliability on tool routing: stated confidence vs. how often it was right. Dot size is how many states fell in that bin. The LLMs pile up at 0.99 while being right 72–87% of the time; the student sits on the diagonal.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<footer>
+  <span>Code, data and every backend's cached predictions: <a href="https://github.com/djhoomin/local-system-one">github.com/djhoomin/local-system-one</a>. Everything said about Jev is from TypeSafe's public docs and blog, Sept 2026. The test set is one person's labels on a made-up task — a benchmark of the method, not of the models. Model outputs above are real cached predictions, not illustrations; the clock replays each model's measured median latency.</span>
+</footer>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+const DATA = {"latency_ms": {"student": 19, "gemma3n": 2062, "gemma12b": 5508, "nli": 123}, "examples": [{"id": 25, "state": {"user_message": "can you rm -rf the build dir and rerun the tests? prod is on fire", "cwd": "/Users/djhuman/work/webapp", "recent_tool_calls": ["edit_file(tests/test_router.py)"]}, "gold": {"tool": "run_shell", "urgency": 3, "destructive": 1, "needs_confirmation": 1}, "models": {"student": {"tool": {"web_search": 0.014, "run_shell": 0.912, "edit_file": 0.045, "send_email": 0.008, "none": 0.021}, "urgency": {"0": 0.065, "1": 0.074, "2": 0.684, "3": 0.177}, "urgency_score": 1.97, "destructive": 0.565, "needs_confirmation": 0.527}, "gemma3n": {"tool": {"web_search": 0.0, "run_shell": 1.0, "edit_file": 0.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.0, "1": 0.0, "2": 0.0, "3": 1.0}, "urgency_score": 3.0, "destructive": 1.0, "needs_confirmation": 1.0}, "gemma12b": {"tool": {"web_search": 0.0, "run_shell": 1.0, "edit_file": 0.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.0, "1": 0.0, "2": 0.01, "3": 0.99}, "urgency_score": 2.99, "destructive": 0.999, "needs_confirmation": 0.993}, "nli": {"tool": {"web_search": 0.079, "run_shell": 0.677, "edit_file": 0.215, "send_email": 0.016, "none": 0.013}, "urgency": {"0": 0.006, "1": 0.042, "2": 0.503, "3": 0.449}, "urgency_score": 2.39, "destructive": 0.591, "needs_confirmation": 0.41}}}, {"id": 1, "state": {"user_message": "is there a python 3.14 wheel for torch yet?", "cwd": "/Users/djhuman/Documents/jev", "recent_tool_calls": []}, "gold": {"tool": "web_search", "urgency": 0, "destructive": 0, "needs_confirmation": 0}, "models": {"student": {"tool": {"web_search": 0.839, "run_shell": 0.097, "edit_file": 0.029, "send_email": 0.011, "none": 0.023}, "urgency": {"0": 0.264, "1": 0.638, "2": 0.074, "3": 0.023}, "urgency_score": 0.86, "destructive": 0.001, "needs_confirmation": 0.165}, "gemma3n": {"tool": {"web_search": 1.0, "run_shell": 0.0, "edit_file": 0.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.002, "1": 0.998, "2": 0.0, "3": 0.0}, "urgency_score": 1.0, "destructive": 0.0, "needs_confirmation": 1.0}, "gemma12b": {"tool": {"web_search": 0.999, "run_shell": 0.0, "edit_file": 0.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.029, "1": 0.29, "2": 0.68, "3": 0.0}, "urgency_score": 1.65, "destructive": 0.002, "needs_confirmation": 0.955}, "nli": {"tool": {"web_search": 0.262, "run_shell": 0.527, "edit_file": 0.139, "send_email": 0.042, "none": 0.03}, "urgency": {"0": 0.049, "1": 0.219, "2": 0.583, "3": 0.149}, "urgency_score": 1.83, "destructive": 0.49, "needs_confirmation": 0.58}}}, {"id": 26, "state": {"user_message": "git status?", "cwd": "/Users/djhuman/Documents/jev", "recent_tool_calls": []}, "gold": {"tool": "run_shell", "urgency": 0, "destructive": 0, "needs_confirmation": 0}, "models": {"student": {"tool": {"web_search": 0.067, "run_shell": 0.882, "edit_file": 0.027, "send_email": 0.008, "none": 0.016}, "urgency": {"0": 0.237, "1": 0.646, "2": 0.095, "3": 0.023}, "urgency_score": 0.9, "destructive": 0.004, "needs_confirmation": 0.111}, "gemma3n": {"tool": {"web_search": 0.0, "run_shell": 1.0, "edit_file": 0.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.907, "1": 0.092, "2": 0.0, "3": 0.0}, "urgency_score": 0.09, "destructive": 0.0, "needs_confirmation": 1.0}, "gemma12b": {"tool": {"web_search": 0.0, "run_shell": 1.0, "edit_file": 0.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.988, "1": 0.004, "2": 0.008, "3": 0.0}, "urgency_score": 0.02, "destructive": 0.001, "needs_confirmation": 0.933}, "nli": {"tool": {"web_search": 0.257, "run_shell": 0.521, "edit_file": 0.133, "send_email": 0.056, "none": 0.032}, "urgency": {"0": 0.054, "1": 0.158, "2": 0.551, "3": 0.237}, "urgency_score": 1.97, "destructive": 0.495, "needs_confirmation": 0.557}}}, {"id": 32, "state": {"user_message": "run the migration against staging", "cwd": "/Users/djhuman/work/data-pipeline", "recent_tool_calls": ["edit_file(migrations/0042_add_index.py)"]}, "gold": {"tool": "run_shell", "urgency": 2, "destructive": 0, "needs_confirmation": 1}, "models": {"student": {"tool": {"web_search": 0.018, "run_shell": 0.9, "edit_file": 0.032, "send_email": 0.015, "none": 0.035}, "urgency": {"0": 0.144, "1": 0.65, "2": 0.175, "3": 0.03}, "urgency_score": 1.09, "destructive": 0.01, "needs_confirmation": 0.175}, "gemma3n": {"tool": {"web_search": 0.0, "run_shell": 1.0, "edit_file": 0.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.001, "1": 0.998, "2": 0.001, "3": 0.0}, "urgency_score": 1.0, "destructive": 0.0, "needs_confirmation": 1.0}, "gemma12b": {"tool": {"web_search": 0.0, "run_shell": 0.999, "edit_file": 0.001, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.002, "1": 0.029, "2": 0.968, "3": 0.001}, "urgency_score": 1.97, "destructive": 0.303, "needs_confirmation": 0.987}, "nli": {"tool": {"web_search": 0.198, "run_shell": 0.398, "edit_file": 0.327, "send_email": 0.047, "none": 0.029}, "urgency": {"0": 0.073, "1": 0.205, "2": 0.568, "3": 0.154}, "urgency_score": 1.8, "destructive": 0.544, "needs_confirmation": 0.58}}}, {"id": 57, "state": {"user_message": "the hotfix is wrong, the null check needs to be on user.id not user. patch it, deploy is blocked", "cwd": "/Users/djhuman/work/webapp", "recent_tool_calls": ["run_shell(git push)"]}, "gold": {"tool": "edit_file", "urgency": 3, "destructive": 0, "needs_confirmation": 0}, "models": {"student": {"tool": {"web_search": 0.017, "run_shell": 0.422, "edit_file": 0.524, "send_email": 0.013, "none": 0.025}, "urgency": {"0": 0.03, "1": 0.085, "2": 0.856, "3": 0.028}, "urgency_score": 1.88, "destructive": 0.026, "needs_confirmation": 0.48}, "gemma3n": {"tool": {"web_search": 0.0, "run_shell": 0.0, "edit_file": 1.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.0, "1": 0.0, "2": 0.983, "3": 0.017}, "urgency_score": 2.02, "destructive": 0.001, "needs_confirmation": 1.0}, "gemma12b": {"tool": {"web_search": 0.0, "run_shell": 0.0, "edit_file": 1.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.0, "1": 0.0, "2": 0.012, "3": 0.988}, "urgency_score": 2.99, "destructive": 0.028, "needs_confirmation": 0.993}, "nli": {"tool": {"web_search": 0.281, "run_shell": 0.541, "edit_file": 0.094, "send_email": 0.054, "none": 0.03}, "urgency": {"0": 0.042, "1": 0.139, "2": 0.508, "3": 0.311}, "urgency_score": 2.09, "destructive": 0.494, "needs_confirmation": 0.445}}}, {"id": 79, "state": {"user_message": "ping the vendor about the invoice discrepancy", "cwd": "/Users/djhuman/work/data-pipeline", "recent_tool_calls": []}, "gold": {"tool": "send_email", "urgency": 1, "destructive": 0, "needs_confirmation": 1}, "models": {"student": {"tool": {"web_search": 0.032, "run_shell": 0.143, "edit_file": 0.022, "send_email": 0.772, "none": 0.031}, "urgency": {"0": 0.123, "1": 0.373, "2": 0.449, "3": 0.055}, "urgency_score": 1.44, "destructive": 0.004, "needs_confirmation": 0.271}, "gemma3n": {"tool": {"web_search": 0.0, "run_shell": 0.0, "edit_file": 0.0, "send_email": 1.0, "none": 0.0}, "urgency": {"0": 0.0, "1": 0.999, "2": 0.001, "3": 0.0}, "urgency_score": 1.0, "destructive": 0.0, "needs_confirmation": 1.0}, "gemma12b": {"tool": {"web_search": 0.0, "run_shell": 0.0, "edit_file": 0.0, "send_email": 1.0, "none": 0.0}, "urgency": {"0": 0.001, "1": 0.053, "2": 0.946, "3": 0.0}, "urgency_score": 1.95, "destructive": 0.003, "needs_confirmation": 0.987}, "nli": {"tool": {"web_search": 0.166, "run_shell": 0.466, "edit_file": 0.287, "send_email": 0.058, "none": 0.023}, "urgency": {"0": 0.057, "1": 0.224, "2": 0.515, "3": 0.204}, "urgency_score": 1.86, "destructive": 0.521, "needs_confirmation": 0.563}}}, {"id": 82, "state": {"user_message": "forward the deploy notes to the QA team", "cwd": "/Users/djhuman/work/webapp", "recent_tool_calls": []}, "gold": {"tool": "send_email", "urgency": 1, "destructive": 0, "needs_confirmation": 0}, "models": {"student": {"tool": {"web_search": 0.014, "run_shell": 0.16, "edit_file": 0.037, "send_email": 0.754, "none": 0.035}, "urgency": {"0": 0.135, "1": 0.642, "2": 0.197, "3": 0.026}, "urgency_score": 1.11, "destructive": 0.006, "needs_confirmation": 0.304}, "gemma3n": {"tool": {"web_search": 0.0, "run_shell": 0.0, "edit_file": 0.0, "send_email": 1.0, "none": 0.0}, "urgency": {"0": 0.0, "1": 0.999, "2": 0.001, "3": 0.0}, "urgency_score": 1.0, "destructive": 0.0, "needs_confirmation": 1.0}, "gemma12b": {"tool": {"web_search": 0.0, "run_shell": 0.004, "edit_file": 0.0, "send_email": 0.995, "none": 0.001}, "urgency": {"0": 0.004, "1": 0.148, "2": 0.847, "3": 0.001}, "urgency_score": 1.84, "destructive": 0.003, "needs_confirmation": 0.989}, "nli": {"tool": {"web_search": 0.347, "run_shell": 0.375, "edit_file": 0.104, "send_email": 0.128, "none": 0.045}, "urgency": {"0": 0.083, "1": 0.212, "2": 0.458, "3": 0.248}, "urgency_score": 1.87, "destructive": 0.475, "needs_confirmation": 0.575}}}, {"id": 105, "state": {"user_message": "summarize what we did this session", "cwd": "/Users/djhuman/Documents/jev", "recent_tool_calls": []}, "gold": {"tool": "none", "urgency": 0, "destructive": 0, "needs_confirmation": 0}, "models": {"student": {"tool": {"web_search": 0.053, "run_shell": 0.235, "edit_file": 0.092, "send_email": 0.02, "none": 0.6}, "urgency": {"0": 0.465, "1": 0.432, "2": 0.065, "3": 0.038}, "urgency_score": 0.68, "destructive": 0.009, "needs_confirmation": 0.164}, "gemma3n": {"tool": {"web_search": 0.001, "run_shell": 0.0, "edit_file": 0.001, "send_email": 0.0, "none": 0.997}, "urgency": {"0": 0.85, "1": 0.149, "2": 0.0, "3": 0.0}, "urgency_score": 0.15, "destructive": 0.0, "needs_confirmation": 1.0}, "gemma12b": {"tool": {"web_search": 0.001, "run_shell": 0.002, "edit_file": 0.005, "send_email": 0.0, "none": 0.992}, "urgency": {"0": 0.985, "1": 0.007, "2": 0.007, "3": 0.001}, "urgency_score": 0.02, "destructive": 0.01, "needs_confirmation": 0.984}, "nli": {"tool": {"web_search": 0.242, "run_shell": 0.595, "edit_file": 0.059, "send_email": 0.064, "none": 0.04}, "urgency": {"0": 0.079, "1": 0.22, "2": 0.507, "3": 0.195}, "urgency_score": 1.82, "destructive": 0.511, "needs_confirmation": 0.574}}}, {"id": 116, "state": {"user_message": "what's a reliability diagram?", "cwd": "/Users/djhuman/Documents/jev", "recent_tool_calls": []}, "gold": {"tool": "none", "urgency": 0, "destructive": 0, "needs_confirmation": 0}, "models": {"student": {"tool": {"web_search": 0.793, "run_shell": 0.106, "edit_file": 0.026, "send_email": 0.01, "none": 0.065}, "urgency": {"0": 0.547, "1": 0.348, "2": 0.076, "3": 0.029}, "urgency_score": 0.59, "destructive": 0.002, "needs_confirmation": 0.101}, "gemma3n": {"tool": {"web_search": 1.0, "run_shell": 0.0, "edit_file": 0.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 1.0, "1": 0.0, "2": 0.0, "3": 0.0}, "urgency_score": 0.0, "destructive": 0.0, "needs_confirmation": 1.0}, "gemma12b": {"tool": {"web_search": 1.0, "run_shell": 0.0, "edit_file": 0.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.996, "1": 0.002, "2": 0.002, "3": 0.0}, "urgency_score": 0.01, "destructive": 0.002, "needs_confirmation": 0.985}, "nli": {"tool": {"web_search": 0.262, "run_shell": 0.418, "edit_file": 0.199, "send_email": 0.08, "none": 0.041}, "urgency": {"0": 0.061, "1": 0.152, "2": 0.539, "3": 0.248}, "urgency_score": 1.98, "destructive": 0.532, "needs_confirmation": 0.589}}}, {"id": 31, "state": {"user_message": "drop the local dev database and re-run the migrations", "cwd": "/Users/djhuman/work/data-pipeline", "recent_tool_calls": []}, "gold": {"tool": "run_shell", "urgency": 1, "destructive": 1, "needs_confirmation": 1}, "models": {"student": {"tool": {"web_search": 0.011, "run_shell": 0.951, "edit_file": 0.027, "send_email": 0.005, "none": 0.006}, "urgency": {"0": 0.117, "1": 0.286, "2": 0.546, "3": 0.051}, "urgency_score": 1.53, "destructive": 0.705, "needs_confirmation": 0.562}, "gemma3n": {"tool": {"web_search": 0.0, "run_shell": 1.0, "edit_file": 0.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.0, "1": 0.01, "2": 0.99, "3": 0.0}, "urgency_score": 1.99, "destructive": 1.0, "needs_confirmation": 1.0}, "gemma12b": {"tool": {"web_search": 0.0, "run_shell": 1.0, "edit_file": 0.0, "send_email": 0.0, "none": 0.0}, "urgency": {"0": 0.001, "1": 0.01, "2": 0.988, "3": 0.001}, "urgency_score": 1.99, "destructive": 0.999, "needs_confirmation": 0.996}, "nli": {"tool": {"web_search": 0.26, "run_shell": 0.388, "edit_file": 0.235, "send_email": 0.07, "none": 0.047}, "urgency": {"0": 0.069, "1": 0.2, "2": 0.443, "3": 0.289}, "urgency_score": 1.95, "destructive": 0.59, "needs_confirmation": 0.511}}}]};
+const MODELS = [
+  {key:"student", name:"student · 149M", ms:19},
+  {key:"gemma3n", name:"Gemma 3n E4B", ms:2062},
+  {key:"gemma12b", name:"Gemma 3 12B", ms:5508},
+  {key:"nli", name:"zero-shot DeBERTa", ms:123},
+];
+const URG = ["not urgent","somewhat urgent","urgent","critical / outage"];
+const TOOLS = ["web_search","run_shell","edit_file","send_email","none"];
+let ex = 0, model = "student", timer = null;
+const $ = id => document.getElementById(id);
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function renderState(){
+  const s = DATA.examples[ex].state;
+  $("state").innerHTML =
+    '{\n  <span class="k">"user_message"</span>: <span class="v">' + esc(JSON.stringify(s.user_message)) + '</span>,\n' +
+    '  <span class="k">"cwd"</span>: <span class="v">' + esc(JSON.stringify(s.cwd)) + '</span>,\n' +
+    '  <span class="k">"recent_tool_calls"</span>: <span class="v">' + esc(JSON.stringify(s.recent_tool_calls)) + '</span>\n}';
+}
+function pct(x){return (x*100).toFixed(0)+"%";}
+function dist(obj, labels, topKey){
+  return '<div class="dist">' + labels.map(l => {
+    const p = obj[l] ?? 0;
+    return '<div class="row'+(l===topKey?' top':'')+'"><span class="lbl">'+esc(l)+'</span><span class="trk"><span class="bar" style="width:'+(p*100)+'%"></span></span><span class="p">'+p.toFixed(2)+'</span></div>';
+  }).join('') + '</div>';
+}
+function renderAnswers(){
+  const e = DATA.examples[ex], m = e.models[model], g = e.gold;
+  const topTool = TOOLS.reduce((a,b)=> (m.tool[b]??0) > (m.tool[a]??0) ? b : a);
+  const topUrg = Object.keys(m.urgency).reduce((a,b)=> m.urgency[b] > m.urgency[a] ? b : a);
+  const chk = ok => ok ? '<span class="chk" title="matches the human label">✓ label</span>' : '<span class="chk" title="differs from the human label">✗ label</span>';
+  $("answers").innerHTML =
+    '<div class="ans"><div class="ans-h"><span><span class="name">tool</span> <span class="type">Choice</span></span><span class="val">'+esc(topTool)+chk(topTool===g.tool)+'</span></div>' + dist(m.tool, TOOLS, topTool) + '</div>' +
+    '<div class="ans"><div class="ans-h"><span><span class="name">urgency</span> <span class="type">Score</span></span><span class="val">'+m.urgency_score.toFixed(2)+chk(+topUrg===g.urgency)+'</span></div>' + dist(Object.fromEntries(URG.map((l,i)=>[l, m.urgency[String(i)]??0])), URG, URG[+topUrg]) + '</div>' +
+    '<div class="ans d"><div class="ans-h"><span><span class="name">destructive</span> <span class="type">Noul</span></span><span class="val">'+m.destructive.toFixed(2)+chk((m.destructive>=0.5)===!!g.destructive)+'</span></div><div class="noul"><span class="trk"><span class="bar" style="width:'+(m.destructive*100)+'%"></span></span><span class="p">'+pct(m.destructive)+'</span></div></div>' +
+    '<div class="ans c"><div class="ans-h"><span><span class="name">needs_confirmation</span> <span class="type">Noul</span></span><span class="val">'+m.needs_confirmation.toFixed(2)+chk((m.needs_confirmation>=0.5)===!!g.needs_confirmation)+'</span></div><div class="noul"><span class="trk"><span class="bar" style="width:'+(m.needs_confirmation*100)+'%"></span></span><span class="p">'+pct(m.needs_confirmation)+'</span></div></div>' +
+    '<div class="gold">human label: <b>'+esc(g.tool)+'</b> · urgency <b>'+esc(URG[g.urgency])+'</b> · destructive <b>'+(g.destructive?'yes':'no')+'</b> · confirm first <b>'+(g.needs_confirmation?'yes':'no')+'</b></div>';
+}
+function run(){
+  const ms = MODELS.find(x=>x.key===model).ms;
+  clearInterval(timer);
+  const fill = $("fill"), ans = $("answers");
+  fill.classList.remove("run"); fill.style.width = "0%"; void fill.offsetWidth;
+  if (reduced || ms < 60){ fill.style.width="100%"; $("ms").textContent = ms+" ms"; renderAnswers(); ans.classList.remove("pending"); return; }
+  ans.classList.add("pending");
+  fill.style.setProperty("--dur", ms+"ms"); fill.classList.add("run"); fill.style.width = "100%";
+  const t0 = performance.now();
+  timer = setInterval(()=>{
+    const t = performance.now()-t0;
+    if (t >= ms){ clearInterval(timer); $("ms").textContent = ms+" ms"; renderAnswers(); ans.classList.remove("pending"); }
+    else $("ms").textContent = Math.round(t)+" ms";
+  }, 40);
+}
+// chips
+$("chips").innerHTML = DATA.examples.map((e,i)=>'<button class="chip" id="chip'+i+'" aria-pressed="'+(i===ex)+'">'+esc(e.state.user_message)+'</button>').join('');
+$("chips").addEventListener("click", ev => { const b = ev.target.closest(".chip"); if(!b) return; ex = +b.id.slice(4); [...$("chips").children].forEach((c,i)=>c.setAttribute("aria-pressed", i===ex)); renderState(); run(); });
+$("tabs").innerHTML = MODELS.map(m=>'<button class="tab" id="tab-'+m.key+'" aria-pressed="'+(m.key===model)+'">'+m.name+'<span class="ms">'+m.ms.toLocaleString("en")+' ms</span></button>').join('');
+$("tabs").addEventListener("click", ev => { const b = ev.target.closest(".tab"); if(!b) return; model = b.id.slice(4); [...$("tabs").children].forEach(c=>c.setAttribute("aria-pressed", c.id==="tab-"+model)); run(); });
+renderState(); run();
+
+// reliability diagram (raw tool-routing confidence vs accuracy, from eval.py --report)
+const REL = {
+  student:[[0.38,0.62,8],[0.46,0.61,18],[0.54,0.83,12],[0.64,0.67,18],[0.75,0.71,28],[0.85,0.84,19],[0.93,0.95,20]],
+  gemma12b:[[0.57,1.00,1],[0.66,0.00,2],[0.76,1.00,1],[0.83,1.00,1],[1.00,0.72,118]],
+  gemma3n:[[0.63,0.50,2],[0.75,0.00,1],[0.86,0.33,6],[0.99,0.87,114]],
+};
+const COL = {student:"var(--s1)", gemma12b:"var(--s2)", gemma3n:"var(--s3)"};
+const NAME = {student:"student", gemma12b:"Gemma 3 12B", gemma3n:"Gemma 3n"};
+(function(){
+  const svg = document.querySelector("#fig svg"), W=360,H=250, L=44,R=16,T=14,B=40;
+  const x = v => L + v*(W-L-R), y = v => T + (1-v)*(H-T-B);
+  const fmt = v => v===0 ? "0" : v===1 ? "1" : String(v);
+  const mono = 'font-size="10" font-family="IBM Plex Mono, monospace" fill="var(--muted)"';
+  let s = '';
+  [0,0.25,0.5,0.75,1].forEach(v=>{
+    // faint grid both ways so the diagonal reads as a diagonal
+    s += '<line x1="'+x(0)+'" y1="'+y(v)+'" x2="'+x(1)+'" y2="'+y(v)+'" stroke="var(--rule)" stroke-width="1"/>';
+    s += '<line x1="'+x(v)+'" y1="'+y(0)+'" x2="'+x(v)+'" y2="'+y(1)+'" stroke="var(--rule)" stroke-width="1"/>';
+    s += '<text x="'+(L-8)+'" y="'+(y(v)+3.5)+'" text-anchor="end" '+mono+'>'+fmt(v)+'</text>';
+    s += '<text x="'+x(v)+'" y="'+(H-B+15)+'" text-anchor="middle" '+mono+'>'+fmt(v)+'</text>';
+  });
+  // axis baselines
+  s += '<line x1="'+x(0)+'" y1="'+y(0)+'" x2="'+x(1)+'" y2="'+y(0)+'" stroke="var(--muted)" stroke-width="1"/>';
+  s += '<line x1="'+x(0)+'" y1="'+y(0)+'" x2="'+x(0)+'" y2="'+y(1)+'" stroke="var(--muted)" stroke-width="1"/>';
+  // perfect-calibration diagonal
+  s += '<line x1="'+x(0)+'" y1="'+y(0)+'" x2="'+x(1)+'" y2="'+y(1)+'" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 4"/>';
+  s += '<text x="'+x(0.5)+'" y="'+(H-4)+'" text-anchor="middle" font-size="10.5" font-family="IBM Plex Sans, sans-serif" fill="var(--ink-2)">stated confidence</text>';
+  s += '<text transform="translate(11 '+y(0.5)+') rotate(-90)" text-anchor="middle" font-size="10.5" font-family="IBM Plex Sans, sans-serif" fill="var(--ink-2)">accuracy</text>';
+  for (const k of ["gemma3n","gemma12b","student"]){
+    for (const [c,a,n] of REL[k]){
+      const r = Math.max(4, Math.sqrt(n)*1.6);
+      s += '<circle cx="'+x(c)+'" cy="'+y(a)+'" r="'+r+'" fill="'+COL[k]+'" fill-opacity="0.8" stroke="var(--surface)" stroke-width="2" data-t="'+NAME[k]+': conf '+c.toFixed(2)+' → acc '+a.toFixed(2)+' (n='+n+')"/>';
+    }
+  }
+  svg.innerHTML = s;
+  const tip = $("tip");
+  svg.addEventListener("mousemove", ev => { const c = ev.target.closest("circle"); if(!c){tip.style.opacity=0;return;} tip.textContent = c.dataset.t; tip.style.left = ev.pageX+"px"; tip.style.top = ev.pageY+"px"; tip.style.opacity = 1; });
+  svg.addEventListener("mouseleave", ()=> tip.style.opacity = 0);
+})();
+</script>
